@@ -1,6 +1,7 @@
 import click
-import os.path
+import math
 import tarfile
+import os.path
 import xml.etree.ElementTree as ET
 
 
@@ -20,8 +21,8 @@ def create_subset_pvd(infilename, outfilename,
             tcurr = float(e.get('timestep'))
             if(tcurr >= tnext):
                 subset.append(e)
-                tlast = tcurr
-                tnext = tlast + t_step
+                ndiff = math.floor((tcurr-tlast)/t_step)
+                tnext = tlast + (ndiff+1.)*t_step
         if(inc_final and tlast < tfinal):
             subset.append(elems[-1])
     elif(nsubset > 2):
