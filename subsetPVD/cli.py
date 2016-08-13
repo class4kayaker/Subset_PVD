@@ -124,7 +124,8 @@ def create_subset_archive(pvdfile, subsetname,
 
     if not quiet:
         with click.progressbar(flist, label="Archiving files") as bar:
-            archive_files(archive_name, bar, zip_type, rel_dir)
+            archive_files(archive_name, bar, zip_type, rel_dir,
+                          prefix=archive_prefix)
     else:
         archive_files(archive_name, flist, zip_type, rel_dir,
                       prefix=archive_prefix)
