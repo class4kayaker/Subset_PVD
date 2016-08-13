@@ -59,14 +59,12 @@ def get_req_file_list_pvd(source_pvd):
     return flist
 
 
-def relpath_filter(tinfo, reldir):
-    fdir, fbase = os.path.split(tinfo.name)
-    archpath = os.path.relpath(tinfo.name, reldir)
-    tinfo.name = archpath
-    return tinfo
-
-
 def archive_files(archive_fileprefix, flist, zip_type, reldir, prefix=""):
+    def archive_filter(tinfo):
+        fdir, fbase = os.path.split(tinfo.name)
+        archpath = os.path.join(prefix, os.path.relpath(tinfo.name, reldir))
+        tinfo.name = archpath
+        return tinfo
     write_type = 'w:'+zip_type
 
     if zip_type:
@@ -76,8 +74,7 @@ def archive_files(archive_fileprefix, flist, zip_type, reldir, prefix=""):
 
     with tarfile.open(archive_filename, write_type) as out_file:
         for f in flist:
-            filterF = (lambda tinfo: relpath_filter(tinfo, reldir))
-            out_file.add(f, filter=filterF)
+            out_file.add(f, filter=archive_filter)
 
 
 @click.command()
