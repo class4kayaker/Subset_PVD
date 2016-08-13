@@ -79,6 +79,7 @@ def archive_files(archive_fileprefix, flist, zip_type, reldir, prefix=""):
 
 @click.command()
 @click.argument('pvdfile', type=click.Path(exists=True))
+@click.argument('files', nargs=-1, type=click.Path(exists=True))
 @click.option('--subsetname', '-s', default='soln_subset.pvd',
               help="Name to give to generated subset pvd file")
 @click.option('--archive-name', '-a', default='vis_subset',
@@ -103,11 +104,12 @@ def archive_files(archive_fileprefix, flist, zip_type, reldir, prefix=""):
               help="Compress archive using xz")
 @click.option('--quiet', '-q', is_flag=True,
               help="Do not write to stdout")
-def create_subset_archive(pvdfile, subsetname,
+def create_subset_archive(pvdfile, files, subsetname,
                           archive_name, archive_prefix, zip_type,
                           t_step, n_select, inc_final,
                           quiet):
-    """Generate archive of a subset of the supplied PVDFILE"""
+    """Generate archive of a subset of the supplied PVDFILE,
+    including FILES in archive"""
     rel_dir = os.path.dirname(os.path.normpath(pvdfile))
 
     subset_fullpath = os.path.join(rel_dir,
@@ -121,6 +123,8 @@ def create_subset_archive(pvdfile, subsetname,
     if not quiet:
         click.echo("Obtaining required file list")
     flist = get_req_file_list_pvd(subset_fullpath)
+
+    flist.extend(files)
 
     if not quiet:
         with click.progressbar(flist, label="Archiving files") as bar:
