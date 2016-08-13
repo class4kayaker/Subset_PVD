@@ -81,14 +81,16 @@ def archive_files(archive_fileprefix, flist, zip_type, reldir, prefix=""):
 @click.argument('pvdfile', type=click.Path(exists=True))
 @click.option('--subsetname', '-s', default='soln_subset.pvd',
               help="Name to give to generated subset pvd file")
-@click.option('--archive_name', '-a', default='vis_subset',
+@click.option('--archive-name', '-a', default='vis_subset',
               type=click.Path(),
               help="Name to give to generated archive")
+@click.option('--archive-prefix', '-p', default='',
+              help="Directory to prefix archive contents with")
 @click.option('--t_step', '-t', default=0.0,
               help="Time step size between selected timesteps")
 @click.option('--n_select', '-n', default=0,
               help="Number of timesteps to select by iteration slice")
-@click.option('--inc_final/--no_inc_final', default=True,
+@click.option('--inc-final/--no-inc-final', default=True,
               help="Whether to ensure the final timestep is included in the "
               "selected set")
 @click.option('-d', 'zip_type', flag_value='',
@@ -102,7 +104,7 @@ def archive_files(archive_fileprefix, flist, zip_type, reldir, prefix=""):
 @click.option('--quiet', '-q', is_flag=True,
               help="Do not write to stdout")
 def create_subset_archive(pvdfile, subsetname,
-                          archive_name, zip_type,
+                          archive_name, archive_prefix, zip_type,
                           t_step, n_select, inc_final,
                           quiet):
     """Generate archive of a subset of the supplied PVDFILE"""
@@ -124,7 +126,8 @@ def create_subset_archive(pvdfile, subsetname,
         with click.progressbar(flist, label="Archiving files") as bar:
             archive_files(archive_name, bar, zip_type, rel_dir)
     else:
-        archive_files(archive_name, flist, zip_type, rel_dir)
+        archive_files(archive_name, flist, zip_type, rel_dir,
+                      prefix=archive_prefix)
 
 if(__name__ == "__main__"):
     create_subset_archive()
