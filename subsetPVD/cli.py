@@ -7,6 +7,11 @@ import xml.etree.ElementTree as ET
 
 def create_subset_pvd(infilename, outfilename,
                       nsubset=0, t_step=0.0, inc_final=True):
+    """
+    Generate a PVD file for a subset of provided file based on provided
+    criterion. Assumes DataSet elements each refer to data for a single
+    timestep, and the time information is included.
+    """
     soln_file = ET.parse(infilename)
     elems = soln_file.findall('.//DataSet')
     n_full = len(elems)
@@ -39,6 +44,9 @@ def create_subset_pvd(infilename, outfilename,
 
 
 def get_req_file_list_pvd(source_pvd):
+    """
+    Create list of files referenced by given PVD file
+    """
     flist = []
     flist.append(source_pvd)
 
@@ -60,6 +68,9 @@ def get_req_file_list_pvd(source_pvd):
 
 
 def archive_files(archive_fileprefix, flist, zip_type, reldir, prefix=""):
+    """
+    Combine files in list into tar archive
+    """
     def archive_filter(tinfo):
         fdir, fbase = os.path.split(tinfo.name)
         archpath = os.path.join(prefix, os.path.relpath(tinfo.name, reldir))
